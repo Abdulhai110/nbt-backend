@@ -14,8 +14,9 @@ const app = express();
 // Security & parsing
 app.use(helmet());
 app.use(express.json({ limit: '10kb' }));
-app.use(cors());
-app.use(morgan('dev'));
+app.use(cors({
+  origin: '*' // For testing, allow all origins. Later restrict to frontend domain
+}));app.use(morgan('dev'));
 
 // simple rate limiter for all requests (tweak for production)
 app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 200 }));
