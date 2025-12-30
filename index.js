@@ -1,6 +1,5 @@
 // // index.js
 // require('dotenv').config();
-// const app = require('./src/app');
 
 // const PORT = process.env.PORT || 5000;
 
@@ -32,10 +31,10 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 const connectDB = require("./src/config/db");
+const app = require('./src/app');
 
 // const connectDB = require('./src/config/db.config.js');
 // const route = require('./src/routes/index.routes.js');
-const app = express();
 
 // CORS configuration
 var corsOptions = {
@@ -56,10 +55,6 @@ connectDB();
 
 // Routes configuration
 // app.use('/api/ecommerce-react-apis/v1', route);
-app.use('/api/public/tours', require('./src/routes/public/tour.routes'));
-app.use('/api/public/destinations', require('./src/routes/public/destination.routes'));
-app.use("/api/public/gallery", require("./src/routes/public/gallery.routes"));
-app.use("/api/public/auth", require("./src/routes/auth.routes"));
 
 // Default route for the root path
 app.get("/", (req, res) => {

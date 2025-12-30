@@ -34,19 +34,38 @@ exports.getAll = async (req, res) => {
 // ===================== GET PUBLIC TOURS =====================
 exports.getAllPublic = async (req, res) => {
   try {
-    const tours = await Tour.find({ published: true }).sort({ createdAt: -1 });
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 8;
+    const search = req.query.search || "";
 
-    return res.status(200).json({
+    const skip = (page - 1) * limit;
+
+    const query = {
+      published: true,
+    };
+
+    if (search) {
+      query.title = { $regex: search, $options: "i" };
+    }
+
+    const [tours, total] = await Promise.all([
+      Tour.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit),
+      Tour.countDocuments(query),
+    ]);
+
+    res.status(200).json({
       status: "success",
-      results: tours.length,
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
       data: tours,
     });
   } catch (err) {
     console.error("Get public tours error:", err);
-    return res.status(500).json({
+    res.status(500).json({
       status: "error",
       message: "Failed to fetch public tours",
-      error: err.message,
     });
   }
 };
@@ -101,7 +120,7 @@ exports.create = async (req, res) => {
     }
 
     if (req.files?.images) {
-      data.images = req.files.images.map(f =>
+      data.images = req.files.images.map((f) =>
         buildFilePath("tours/temp", f.filename, req)
       );
     }
@@ -152,7 +171,7 @@ exports.update = async (req, res) => {
     }
 
     if (req.files?.images) {
-      tour.images = req.files.images.map(f =>
+      tour.images = req.files.images.map((f) =>
         buildFilePath(`tours/${req.params.id}`, f.filename, req)
       );
     }
