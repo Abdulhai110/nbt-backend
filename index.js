@@ -56,6 +56,10 @@ connectDB();
 
 // Routes configuration
 // app.use('/api/ecommerce-react-apis/v1', route);
+app.use('/api/public/tours', require('./src/routes/public/tour.routes'));
+app.use('/api/public/destinations', require('./src/routes/public/destination.routes'));
+app.use("/api/public/gallery", require("./src/routes/public/gallery.routes"));
+app.use("/api/public/auth", require("./src/routes/auth.routes"));
 
 // Default route for the root path
 app.get("/", (req, res) => {
