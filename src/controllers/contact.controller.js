@@ -9,20 +9,20 @@ exports.sendContactMail = async (req, res) => {
     return res.status(400).json({ message: "Missing required fields" });
   }
   if (contactMethod === "email") {
-  try {
-    await transporter.sendMail({
-      from: `"NBT Contact" <${process.env.MAIL_USER}>`,
-      to: process.env.ADMIN_EMAIL,
-      replyTo: email,
-      subject: "📩 New Contact Form Submission",
-      attachments: [
-        {
-          filename: "nbt-logo.png",
-          path: path.join(__dirname, "../assets/img/nbt-logo.png"),
-          cid: "nbtlogo", // 👈 same id used in img src
-        },
-      ],
-      html: `
+    try {
+      await transporter.sendMail({
+        from: `"NBT Contact" <${process.env.MAIL_USER}>`,
+        to: process.env.ADMIN_EMAIL,
+        replyTo: email,
+        subject: "📩 New Contact Form Submission",
+        attachments: [
+          {
+            filename: "nbt-logo.png",
+            path: path.join(__dirname, "../assets/img/nbt-logo.png"),
+            cid: "nbtlogo", // 👈 same id used in img src
+          },
+        ],
+        html: `
         <div style="background:#f4f6f8;padding:20px;font-family:Arial,Helvetica,sans-serif">
           <div style="max-width:600px;margin:auto;background:#ffffff;border-radius:8px;overflow:hidden">
 
@@ -101,12 +101,35 @@ exports.sendContactMail = async (req, res) => {
           </div>
         </div>
       `,
-    });
+      });
 
-    res.status(200).json({ success: true, message: "Email sent" });
-  } catch (error) {
-    console.error("Mail Error:", error);
-    res.status(500).json({ success: false, message: "Mail failed" });
+      res.status(200).json({ success: true, message: "Email sent" });
+    } catch (error) {
+      console.error("Mail Error:", error);
+      res.status(500).json({ success: false, message: "Mail failed" });
+    }
   }
-}
+
+  if (contactMethod === "whatsapp") {
+    const adminPhone = "92123456789"; // with country code
+
+    const text = `
+New Contact Message
+Name: ${firstName} ${lastName}
+Email: ${email}
+Phone: ${phone || "N/A"}
+Message: ${message}
+    `;
+
+    const whatsappUrl = `https://wa.me/${adminPhone}?text=${encodeURIComponent(
+      text
+    )}`;
+
+    return res.status(200).json({
+      success: true,
+      whatsappUrl, // frontend opens it
+    });
+  }
+
+  return res.status(400).json({ message: "Invalid contact method" });
 };
