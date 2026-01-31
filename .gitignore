@@ -12,6 +12,9 @@
 /build
 /.history
 
+/package-local.json
+/package.json
+
 # misc
 .DS_Store
 .env.local

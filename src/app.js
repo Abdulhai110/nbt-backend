@@ -26,6 +26,7 @@ app.use('/api/public/tours', require('./routes/public/tour.routes'));
 app.use('/api/public/destinations', require('./routes/public/destination.routes'));
 app.use("/api/public/gallery", require("./routes/public/gallery.routes"));
 app.use("/api/public/auth", require("./routes/auth.routes"));
+app.use("/api/public/contact", require("./routes/public/contact.routes"));
 
 // Admin routes
 app.use('/api/admin/tours', require('./routes/admin/tour.routes'));
