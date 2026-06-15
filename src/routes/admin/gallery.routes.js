@@ -1,13 +1,28 @@
-const express = require("express");
-const router = express.Router();
-const galleryController = require("../../controllers/gallery.controller");
+// src/routes/admin/gallery.routes.js
+const router      = require('express').Router();
+const ctrl        = require('../../controllers/gallery.controller');
+const requireAuth = require('../../middlewares/auth.middleware');
+const restrictTo  = require('../../middlewares/role.middleware');
+const multer      = require('multer');
 
-// Public route
-router.get("/", galleryController.getAllGalleryItems);
+const upload = multer({ storage: multer.memoryStorage() });
 
-// Admin routes
-router.post("/", galleryController.createGalleryItem);
-router.put("/:id", galleryController.updateGalleryItem);
-router.delete("/:id", galleryController.deleteGalleryItem);
+router.use(requireAuth, restrictTo('admin'));
+
+router.get('/',      ctrl.getAllAdmin);
+router.get('/:id',   ctrl.getByIdAdmin);
+router.post('/',     upload.single('image'), ctrl.createGalleryItem);
+router.put('/:id',   upload.single('image'), ctrl.updateGalleryItem);
+router.delete('/:id',                        ctrl.deleteGalleryItem);
 
 module.exports = router;
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+// src/routes/public/gallery.routes.js
+// ─────────────────────────────────────────────────────────────────────────────
+// const router = require('express').Router();
+// const ctrl   = require('../../controllers/gallery.controller');
+// router.get('/',    ctrl.getAllGalleryItems);
+// router.get('/:id', ctrl.getGalleryItemById);
+// module.exports = router;

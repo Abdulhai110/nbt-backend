@@ -1,29 +1,16 @@
-const multer = require("multer");
-const fs = require("fs");
-const path = require("path");
+// src/config/upload.js  (or multer.config.js)
+const multer = require('multer');
 
-// Storage engine
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    // Use tour ID if updating, or temp folder if creating
-    let tourId = req.params.id || "temp";
-
-    // uploads/tours/:id/
-    const uploadPath = path.join(__dirname, "..", "uploads", "tours", tourId);
-
-    // Auto create folder
-    if (!fs.existsSync(uploadPath)) {
-      fs.mkdirSync(uploadPath, { recursive: true });
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed!'), false);
     }
-
-    cb(null, uploadPath);
-  },
-  filename: (req, file, cb) => {
-    // ✅ keep original filename
-    cb(null, file.originalname);
   },
 });
-
-const upload = multer({ storage });
 
 module.exports = upload;

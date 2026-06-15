@@ -6,14 +6,15 @@ const restrictTo = require("../../middlewares/role.middleware");
 
 router.use(requireAuth, restrictTo("admin"));
 
-
-router.get('',ctrl.getAll);
+router.get('', ctrl.getAll);
+router.get('/:id', ctrl.getOne);
+router.delete("/:id", ctrl.remove);
 
 router.post(
   "/",
   upload.fields([
     { name: "coverImage", maxCount: 1 },
-    { name: "images", maxCount: 10 },
+    { name: "images", maxCount: 15 }, // increased limit
   ]),
   ctrl.create
 );
@@ -22,13 +23,9 @@ router.put(
   "/:id",
   upload.fields([
     { name: "coverImage", maxCount: 1 },
-    { name: "images", maxCount: 10 },
+    { name: "images", maxCount: 15 },
   ]),
   ctrl.update
 );
-
-router.get('/:id',ctrl.getOne);
-
-router.delete("/:id", ctrl.remove);
 
 module.exports = router;

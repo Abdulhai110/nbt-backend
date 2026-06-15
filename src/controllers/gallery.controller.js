@@ -1,86 +1,27 @@
-const Gallery = require("../models/gallery.model");
+// src/controllers/gallery.controller.js
+const GalleryService = require('../services/gallery');
 
-// @desc    Get all gallery items
-// @route   GET /api/gallery
-// @access  Public
-exports.getAllGalleryItems = async (req, res) => {
-  try {
-    const items = await Gallery.find();
-    res.status(200).json(items);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+const handleError = (res, err) => {
+  console.error('[Gallery]', err.message);
+  const status = err.message.includes('not found') ? 404
+               : err.message.includes('required')  ? 400
+               : 500;
+  res.status(status).json({ error: err.message });
 };
 
-// @desc Get all gallery items
-// @route GET /api/gallery
-// @access Public
-exports.getAllGalleryItems = async (req, res) => {
+// ── Admin ──────────────────────────────────────────────────────────────────────
+exports.getAllAdmin     = async (req, res) => { try { res.json({ data: await GalleryService.getAllAdmin() }); }      catch (e) { handleError(res, e); } };
+exports.getByIdAdmin   = async (req, res) => { try { res.json({ data: await GalleryService.getById(req.params.id) }); } catch (e) { handleError(res, e); } };
+exports.createGalleryItem = async (req, res) => { try { res.status(201).json({ data: await GalleryService.createItem(req.body, req.file) }); } catch (e) { handleError(res, e); } };
+exports.updateGalleryItem = async (req, res) => { try { res.json({ data: await GalleryService.updateItem(req.params.id, req.body, req.file) }); } catch (e) { handleError(res, e); } };
+exports.deleteGalleryItem = async (req, res) => { try { res.json(await GalleryService.deleteItem(req.params.id)); } catch (e) { handleError(res, e); } };
+
+// ── Public ─────────────────────────────────────────────────────────────────────
+exports.getAllGalleryItems = async (req, res) => { try { res.json(await GalleryService.getPublic(req.query)); } catch (e) { handleError(res, e); } };
+exports.getGalleryItemById = async (req, res) => {
   try {
-    const items = await Gallery.find();
-    res.status(200).json(items);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-// @desc Create new gallery item
-// @route POST /api/gallery
-// @access Admin
-exports.createGalleryItem = async (req, res) => {
-  try {
-    const { title, description, imageUrl } = req.body;
-
-    if (!imageUrl) {
-      return res.status(400).json({ error: "Image URL is required" });
-    }
-
-    const newItem = new Gallery({ title, description, imageUrl });
-    const saved = await newItem.save();
-    res.status(201).json(saved);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-// @desc Update gallery item
-// @route PUT /api/gallery/:id
-// @access Admin
-exports.updateGalleryItem = async (req, res) => {
-  try {
-    const updated = await Gallery.findByIdAndUpdate(
-      req.params.id,
-      { 
-        title: req.body.title, 
-        description: req.body.description, 
-        imageUrl: req.body.imageUrl 
-      },
-      { new: true }
-    );
-
-    if (!updated) {
-      return res.status(404).json({ error: "Gallery item not found" });
-    }
-
-    res.status(200).json(updated);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-// @desc Delete gallery item
-// @route DELETE /api/gallery/:id
-// @access Admin
-exports.deleteGalleryItem = async (req, res) => {
-  try {
-    const deleted = await Gallery.findByIdAndDelete(req.params.id);
-
-    if (!deleted) {
-      return res.status(404).json({ error: "Gallery item not found" });
-    }
-
-    res.status(200).json({ message: "Deleted successfully" });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+    const item = await GalleryService.getById(req.params.id);
+    if (!item.published) return res.status(403).json({ error: 'Forbidden' });
+    res.json({ data: item });
+  } catch (e) { handleError(res, e); }
 };
