@@ -68,7 +68,7 @@ class DestinationService {
       }
       const result = await UploadService.uploadSingle(
         files.coverImage[0].buffer,
-        'destination_covers'
+        'destination_cover'
       );
       clean.coverImage = result.url;
       clean.coverImagePublicId = result.publicId;
