@@ -111,7 +111,7 @@ exports.sendContactMail = async (req, res) => {
   }
 
   if (contactMethod === "whatsapp") {
-    const adminPhone = "92123456789"; // with country code
+    const adminPhone = "923495899779"; // with country code
 
     const text = `
 New Contact Message
