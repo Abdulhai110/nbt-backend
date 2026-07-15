@@ -34,11 +34,14 @@ app.use('/api/public/destinations', require('./routes/public/destination.routes'
 app.use('/api/public/gallery',      require('./routes/public/gallery.routes'));
 app.use('/api/public/auth',         require('./routes/auth.routes'));
 app.use('/api/public/contact',      require('./routes/public/contact.routes'));
-
+app.use('/api/admin/tour-types', require('./routes/admin/tourType.routes'));
+app.use('/api/admin/pricing-categories', require('./routes/admin/pricingCategory.routes'));
 // Admin routes
 app.use('/api/admin/tours',         require('./routes/admin/tour.routes'));
 app.use('/api/admin/destinations',  require('./routes/admin/destination.routes'));
 app.use('/api/admin/gallery',       require('./routes/admin/gallery.routes'));
+app.use('/api/public/tour-types', require('./routes/public/tourType.routes'));
+app.use('/api/public/pricing-categories', require('./routes/public/pricingCategory.routes'));
 
 // 404 handler
 app.use((req, res) => {

@@ -4,7 +4,6 @@
 // const connectDB = require("./src/config/db");
 // const app = require('./src/app');
 
-// connectDB();
 
 // // Catch-all for any undefined routes
 // app.use(function (req, res) {
@@ -12,10 +11,18 @@
 // });
 
 // // Set port and start server
-// const PORT = process.env.PORT;
-// app.listen(PORT, () => {
-//   console.log(`Server is running on port ${PORT}.`);
-// });
+// const PORT = process.env.PORT || 5000;
+// connectDB()
+//   .then(() => {
+//     app.listen(PORT, () => {
+//       console.log(`Server is running on port ${PORT}.`);
+//     });
+//   })
+//   .catch((err) => {
+//     console.error('Failed to connect to MongoDB. Server not started.');
+//     console.error(err);
+//     process.exit(1);
+//   });
 
 require('dotenv').config();
 const connectDB = require('./src/config/db');
