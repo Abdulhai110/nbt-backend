@@ -151,7 +151,7 @@ exports.getOne = async (req, res, next) => {
 };
 
 const parseJsonFields = (data) => {
-  ['locations', 'includes', 'excludes', 'pricingOptions'].forEach((key) => {
+  ['locations', 'includes', 'excludes', 'pricingOptions', 'itinerary', 'itineraryImageMap'].forEach((key) => {
     if (typeof data[key] === 'string') {
       try { data[key] = JSON.parse(data[key]); } catch { data[key] = []; }
     }
